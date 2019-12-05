@@ -1,5 +1,5 @@
 import GitSync from './sync'
-import render from './render'
+import Render, { Files } from './render'
 
 /**
  * 数据源同步相关
@@ -18,6 +18,10 @@ export enum SyncStatus {
   Syncing,
   Error,
   Synced,
+}
+
+export function getCurrentSource() {
+  return GitSync.shared().currentSource
 }
 
 /**
@@ -71,4 +75,4 @@ export async function search(key: string, tag: string[]) {
 /**
  * 渲染相关
  */
-export { render }
+export { Render, Files }

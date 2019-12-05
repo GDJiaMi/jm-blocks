@@ -1,4 +1,6 @@
 export interface BlockConfig {
+  // 区块位置
+  basePath: string
   id: number
   // 区块名称
   name: string
@@ -16,5 +18,5 @@ export interface BlockConfig {
   // 模板文件, 可以是目录或者文件
   // 文件名中可以包含变量，表示最终生成的文件名
   // 例如的 [name].js
-  files: string | string[]
+  files?: string | string[]
 }

@@ -5,6 +5,7 @@ import path from 'path'
 import os from 'os'
 import git from 'simple-git/promise'
 import fs from 'fs'
+import json5 from 'json5'
 import { EventEmitter } from 'events'
 import { ensureDir, isExists } from './utils/fs'
 import { BlockConfig } from './type'
@@ -51,9 +52,13 @@ export default class GitSync extends EventEmitter {
     }
 
     return this.currentBlocks?.filter(i => {
-      i.name.indexOf(key) !== -1 && (tags?.length ? tags.some(t => i.tag.indexOf(t) !== -1) : true)
+      return (
+        (key ? i.name.indexOf(key) !== -1 : true) && (tags?.length ? tags.some(t => i.tag.indexOf(t) !== -1) : true)
+      )
     })
   }
+
+  public getById(id: number) {}
 
   /**
    * 获取区块列表
@@ -63,7 +68,7 @@ export default class GitSync extends EventEmitter {
       return
     }
 
-    const pkgfile = await fp.readFile(path.join(this.currentSource, 'package.json'))
+    const pkgfile = await fp.readFile(path.join(this.currentSourceDir, 'package.json'))
     const pkg = JSON.parse(pkgfile.toString())
     const blocksDir = path.join(this.currentSourceDir, 'blocks')
     if (pkg['jm-blocks'] == null || !isExists(blocksDir)) {
@@ -72,10 +77,16 @@ export default class GitSync extends EventEmitter {
     const blocks = await fp.readdir(blocksDir)
     const rtn = await Promise.all(
       blocks.map(async i => {
-        const configPath = path.join(blocksDir, i, '.block.js')
+        const basePath = path.join(blocksDir, i)
+        const configPath = path.join(blocksDir, i, 'block.json')
+
         // TODO: 配置验证
-        const config = require(configPath)
+        const cf = await fp.readFile(configPath)
+        const config = json5.parse(cf.toString())
+
         config.id = uid++
+        config.basePath = basePath
+
         return config
       }),
     )
@@ -88,9 +99,7 @@ export default class GitSync extends EventEmitter {
       this.syning = true
       this.syncError = undefined
       if (await isExists(this.currentSourceDir)) {
-        // pull
         this.currentRepo = git(this.currentSourceDir)
-        this.currentRepo.pull()
       } else {
         this.currentRepo = git(this.workspace)
         await this.currentRepo.clone(this.currentSource, this.currentSourceName)
