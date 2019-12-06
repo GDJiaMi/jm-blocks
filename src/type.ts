@@ -1,7 +1,7 @@
 export interface BlockConfig {
   // 区块位置
   basePath: string
-  id: number
+  id: string
   // 区块名称
   name: string
   // 区块版本

@@ -1,29 +1,35 @@
 {
-  "name": "jm-blocks",
-  "version": "1.0.0",
+  "name": "@gdjiami/blocks",
+  "version": "0.2.0",
   "description": "block manager",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "repository": "http://code.ejiahe.com:82/WEB/jm-blocks.git",
   "author": "carney520 <carney520@hotmail.com>",
   "license": "MIT",
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -b tsconfig.json"
   },
   "devDependencies": {
     "@types/ejs": "^2.7.0",
     "@types/lodash": "^4.14.149",
+    "@types/glob": "^7.1.1",
+    "@types/json5": "^0.0.30",
     "prettier": "^1.19.1",
     "ts-node": "^8.5.4",
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "@types/glob": "^7.1.1",
-    "@types/json5": "^0.0.30",
     "ejs": "^3.0.1",
     "glob": "^7.1.6",
     "json5": "^2.1.1",
-    "lodash": "^4.17.15",
-    "simple-git": "^1.126.0"
+    "lodash": "^4.17.15"
   }
 }
