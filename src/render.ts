@@ -22,7 +22,7 @@ export interface Config {
   define: BlockConfig
 }
 
-enum FileType {
+export enum FileType {
   Dir,
   File,
 }
@@ -56,7 +56,10 @@ export type Files =
 
 export default class Renderer {
   private cache?: Files[]
-  public constructor(public basePath: string, public define: BlockConfig) {}
+  public isSnippet = false
+  public constructor(public basePath: string, public define: BlockConfig) {
+    this.isSnippet = define.model == null
+  }
 
   /**
    * 文件渲染
@@ -170,10 +173,21 @@ export default class Renderer {
   }
 
   private getNameTemplate(name: string) {
+    if (this.isSnippet) {
+      return ((ignore: any) => name) as TemplateExecutor
+    }
     // 名称处理
     return template(name, {
       interpolate: FILE_NAME_REGEXP,
     })
+  }
+
+  private getContentTemplate(content: string) {
+    if (this.isSnippet) {
+      return (() => content) as ejs.TemplateFunction
+    }
+
+    return ejs.compile(content)
   }
 
   private walk(basePath: string, files: string[], model: any): Promise<Files[]> {
@@ -198,7 +212,7 @@ export default class Renderer {
           return info
         } else {
           const content = (await fp.readFile(fullPath)).toString()
-          const template = ejs.compile(content)
+          const template = this.getContentTemplate(content)
           const rendered = template(model)
           return {
             type: FileType.File,

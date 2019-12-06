@@ -1,5 +1,5 @@
 import GitSync from './sync'
-import Render, { Files } from './render'
+import Render, { Files, FileType } from './render'
 
 /**
  * 数据源同步相关
@@ -31,10 +31,10 @@ export function getSyncStatus(): SyncStatus {
   const git = GitSync.shared()
   return git.currentRepo == null
     ? SyncStatus.Initial
-    : git.syning
-    ? SyncStatus.Syncing
     : git.syncError
     ? SyncStatus.Error
+    : git.syning
+    ? SyncStatus.Syncing
     : SyncStatus.Synced
 }
 
@@ -75,4 +75,4 @@ export async function search(key: string, tag: string[]) {
 /**
  * 渲染相关
  */
-export { Render, Files }
+export { Render, Files, FileType }
